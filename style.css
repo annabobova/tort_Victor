@@ -36,7 +36,7 @@ body {
   -moz-animation: cake 1s infinite;
 
   -o-animation: cake 1s infinite;
-  transform: scale(3);
+  transform: scale(2.5);
     z-index: 1; /* optional */
   overflow: visible; /* allow candles to "escape" */
 
@@ -49,8 +49,8 @@ body {
 }
 .blue-candle { animation: blue-candle 1s infinite; }
 .rose-candle { animation: rose-candle 1s infinite; }
-.blue-candle.blown { animation: blue-candle_blown 0.5s forwards; }
-.rose-candle.blown { animation: rose-candle_blown 0.5s forwards; }
+.blue-candle.blown { animation: blue-candle_blown 0.5s forwards !important;}
+.rose-candle.blown { animation: rose-candle_blown 0.5s forwards !important; }
 
 
 @keyframes cake {
@@ -136,6 +136,7 @@ body {
   box-shadow: 30px 55px 0 0 rgba(255, 193, 7, 1), 35px 55px 0 0 rgba(255, 193, 7, 1), 25px 60px 0 0 rgba(255, 193, 7, 1), 30px 60px 0 0 rgba(255, 193, 7, 1), 35px 60px 0 0 rgba(255, 193, 7, 1), 40px 60px 0 0 rgba(255, 193, 7, 1), 25px 65px 0 0 rgba(255, 193, 7, 1), 30px 65px 0 0 rgba(255, 152, 0, 1), 35px 65px 0 0 rgba(255, 152, 0, 1), 40px 65px 0 0 rgba(255, 193, 7, 1), 25px 70px 0 0 rgba(255, 193, 7, 1), 30px 70px 0 0 rgba(255, 152, 0, 1), 35px 70px 0 0 rgba(255, 152, 0, 1), 40px 70px 0 0 rgba(255, 193, 7, 1), 30px 75px 0 0 rgba(205,150,255,1), 35px 75px 0 0 rgba(205,150,255,1), 30px 80px 0 0 rgba(205,150,255,1), 35px 80px 0 0 rgba(205,150,255,1), 30px 85px 0 0 rgba(205,150,255,1), 35px 85px 0 0 rgba(205,150,255,1), 30px 90px 0 0 rgba(205,150,255,1), 35px 90px 0 0 rgba(205,150,255,1), 30px 95px 0 0 rgba(205,150,255,1), 35px 95px 0 0 rgba(205,150,255,1), 30px 100px 0 0 rgba(205,150,255,1), 35px 100px 0 0 rgba(205,150,255,1);height: 5px; width: 5px;
   }
 }
+
 .rose-candle.blown {
   position: absolute;
   animation: rose-candle_blown 10s infinite;
