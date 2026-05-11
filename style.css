@@ -36,7 +36,7 @@ body {
   -moz-animation: cake 1s infinite;
 
   -o-animation: cake 1s infinite;
-  transform: scale(2.5);
+  transform: scale(3);
     z-index: 1; /* optional */
   overflow: visible; /* allow candles to "escape" */
 
