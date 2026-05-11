@@ -85,81 +85,73 @@
 
       createCandles(candleCount);
 
-      // === Microphone / Blow Detection ===
+// === Microphone / Blow Detection ===
       async function startMicDetection() {
-        try {
-          const stream = await navigator.mediaDevices.getUserMedia({
-            audio: true,
-          });
-          const audioContext = new (window.AudioContext ||
-            window.webkitAudioContext)();
-          const source = audioContext.createMediaStreamSource(stream);
-          const analyser = audioContext.createAnalyser();
-          analyser.fftSize = 512;
+        // Pour les navigateurs modernes, l'AudioContext doit souvent être repris après un clic
+        const startAudio = async () => {
+          try {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const source = audioContext.createMediaStreamSource(stream);
+            const analyser = audioContext.createAnalyser();
+            analyser.fftSize = 256; // Plus petit pour plus de réactivité
 
-          source.connect(analyser);
+            source.connect(analyser);
+            const dataArray = new Uint8Array(analyser.frequencyBinCount);
+            let blown = false;
 
-          const dataArray = new Uint8Array(analyser.frequencyBinCount);
+            function detectBlow() {
+              if (blown) return; // Arrête de calculer si c'est déjà soufflé
 
-          let blown = false;
-
-          function detectBlow() {
-            analyser.getByteFrequencyData(dataArray);
-
-            let highFreqSum = 0;
-            let lowFreqSum = 0;
-
-            const midpoint = dataArray.length / 2;
-
-            for (let i = 0; i < dataArray.length; i++) {
-              if (i < midpoint) {
-                lowFreqSum += dataArray[i];
-              } else {
-                highFreqSum += dataArray[i];
+              analyser.getByteFrequencyData(dataArray);
+              
+              // On calcule le volume moyen (RMS simplifié)
+              let sum = 0;
+              for (let i = 0; i < dataArray.length; i++) {
+                sum += dataArray[i];
               }
+              let average = sum / dataArray.length;
+
+              // SEUIL DE DÉTECTION : 
+              // 40-50 est sensible. Si ça s'éteint tout seul, monte à 60.
+              if (average > 50) { 
+                blown = true;
+                blowOutCandles();
+              }
+              requestAnimationFrame(detectBlow);
             }
-
-            const highAvg = highFreqSum / (dataArray.length / 2);
-            const lowAvg = lowFreqSum / (dataArray.length / 2);
-
-            const ratio = highAvg / (lowAvg + 1);
-
-            const BLOW_RATIO_THRESHOLD = 0.1;
-
-            if (ratio > BLOW_RATIO_THRESHOLD && !blown) {
-              blown = true;
-              blowOutCandles();
-            }
-
-            requestAnimationFrame(detectBlow);
+            detectBlow();
+          } catch (err) {
+            console.error("Mic access error:", err);
           }
+        };
 
-          detectBlow();
-        } catch (err) {
-          console.error("Mic access error:", err);
-        }
+        // On lance la détection au premier clic/touche sur l'écran
+        window.addEventListener('click', startAudio, { once: true });
+        window.addEventListener('touchstart', startAudio, { once: true });
       }
 
       function blowOutCandles() {
         const candles = document.querySelectorAll(".candle");
         candles.forEach((candle) => {
-          const delay = Math.random() * 1000;
+          const delay = Math.random() * 800; // Un peu plus rapide
           setTimeout(() => {
-            colors.forEach((color) => {
-              if (candle.classList.contains(color)) {
-                candle.classList.add("blown");
-              }
-            });
+            // ÉTAPE CRUCIALE : On enlève l'animation de feu et on met celle de l'extinction
+            candle.style.animation = "none"; 
+            candle.offsetHeight; // Force le recalcul du navigateur
+            candle.classList.add("blown");
           }, delay);
         });
 
-        // Update subTitle after short delay
         setTimeout(() => {
           const subTitle = document.getElementById("subTitle");
-          subTitle.textContent = `Youhooo!! On va fêter ça ensemble quand tu arrives 🎉`;
+          subTitle.textContent = `Youhooo!! On va fêter ça ensemble!! 🎉`;
         }, 1200);
       }
 
+    
+
+    
       startMicDetection();
     </script>
   </body>
